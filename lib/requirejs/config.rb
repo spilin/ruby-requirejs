@@ -28,7 +28,7 @@ module Requirejs
     end
 
     def cleanup_cache_dir
-      FileUtils.remove_entry_secure(self.cache_location)
+      FileUtils.remove_entry_secure(self.cache_location) rescue nil
     end
 
     def optimize_with_almond?
