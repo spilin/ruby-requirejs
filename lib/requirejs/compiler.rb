@@ -3,6 +3,7 @@ module Requirejs
     attr_accessor :scope, :data, :file, :build_script_path
 
     def initialize(options ={})
+      Requirejs.config.ensure_cache_location_exists
       @scope, @data, @file = options[:scope], options[:data], options[:file]
       @build_script_path = File.join(Requirejs.config.cache_build_scripts_location, basename)
     end
