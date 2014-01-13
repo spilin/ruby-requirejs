@@ -1,4 +1,7 @@
 # Ruby::Requirejs
+# Initial implementation
+# Patience please, i'm working on it...
+# TODO: provide proper documentation and tests
 
 TODO: Write a gem description
 

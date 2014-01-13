@@ -1,5 +1,5 @@
 /**
- * almond 0.2.5 Copyright (c) 2011-2012, The Dojo Foundation All Rights Reserved.
+ * @license almond 0.2.9 Copyright (c) 2011-2014, The Dojo Foundation All Rights Reserved.
  * Available via the MIT or new BSD license.
  * see: http://github.com/jrburke/almond for details
  */
@@ -11,12 +11,13 @@
 var requirejs, require, define;
 (function (undef) {
   var main, req, makeMap, handlers,
-      defined = {},
-      waiting = {},
-      config = {},
-      defining = {},
-      hasOwn = Object.prototype.hasOwnProperty,
-      aps = [].slice;
+    defined = {},
+    waiting = {},
+    config = {},
+    defining = {},
+    hasOwn = Object.prototype.hasOwnProperty,
+    aps = [].slice,
+    jsSuffixRegExp = /\.js$/;
 
   function hasProp(obj, prop) {
     return hasOwn.call(obj, prop);
@@ -31,11 +32,11 @@ var requirejs, require, define;
    * @returns {String} normalized name
    */
   function normalize(name, baseName) {
-    var nameParts, nameSegment, mapValue, foundMap,
-        foundI, foundStarMap, starI, i, j, part,
-        baseParts = baseName && baseName.split("/"),
-        map = config.map,
-        starMap = (map && map['*']) || {};
+    var nameParts, nameSegment, mapValue, foundMap, lastIndex,
+      foundI, foundStarMap, starI, i, j, part,
+      baseParts = baseName && baseName.split("/"),
+      map = config.map,
+      starMap = (map && map['*']) || {};
 
     //Adjust any relative paths.
     if (name && name.charAt(0) === ".") {
@@ -49,8 +50,15 @@ var requirejs, require, define;
         //"one/two/three.js", but we want the directory, "one/two" for
         //this normalization.
         baseParts = baseParts.slice(0, baseParts.length - 1);
+        name = name.split('/');
+        lastIndex = name.length - 1;
 
-        name = baseParts.concat(name.split("/"));
+        // Node .js allowance:
+        if (config.nodeIdCompat && jsSuffixRegExp.test(name[lastIndex])) {
+          name[lastIndex] = name[lastIndex].replace(jsSuffixRegExp, '');
+        }
+
+        name = baseParts.concat(name);
 
         //start trimDots
         for (i = 0; i < name.length; i += 1) {
@@ -177,7 +185,7 @@ var requirejs, require, define;
   //did not have a plugin prefix.
   function splitPrefix(name) {
     var prefix,
-        index = name ? name.indexOf('!') : -1;
+      index = name ? name.indexOf('!') : -1;
     if (index > -1) {
       prefix = name.substring(0, index);
       name = name.substring(index + 1, name.length);
@@ -192,8 +200,8 @@ var requirejs, require, define;
    */
   makeMap = function (name, relName) {
     var plugin,
-        parts = splitPrefix(name),
-        prefix = parts[0];
+      parts = splitPrefix(name),
+      prefix = parts[0];
 
     name = parts[1];
 
@@ -258,15 +266,15 @@ var requirejs, require, define;
 
   main = function (name, deps, callback, relName) {
     var cjsModule, depName, ret, map, i,
-        args = [],
-        usingExports;
+      args = [],
+      callbackType = typeof callback,
+      usingExports;
 
     //Use name if no relName
     relName = relName || name;
 
     //Call the callback to define the module, if necessary.
-    if (typeof callback === 'function') {
-
+    if (callbackType === 'undefined' || callbackType === 'function') {
       //Pull out the defined dependencies and pass the ordered
       //values to the callback.
       //Default to [require, exports, module] if no deps
@@ -286,8 +294,8 @@ var requirejs, require, define;
           //CommonJS module spec 1.1
           cjsModule = args[i] = handlers.module(name);
         } else if (hasProp(defined, depName) ||
-            hasProp(waiting, depName) ||
-            hasProp(defining, depName)) {
+          hasProp(waiting, depName) ||
+          hasProp(defining, depName)) {
           args[i] = callDep(depName);
         } else if (map.p) {
           map.p.load(map.n, makeRequire(relName, true), makeLoad(depName), {});
@@ -297,14 +305,14 @@ var requirejs, require, define;
         }
       }
 
-      ret = callback.apply(defined[name], args);
+      ret = callback ? callback.apply(defined[name], args) : undefined;
 
       if (name) {
         //If setting exports via "module" is in play,
         //favor that over return value and exports. After that,
         //favor a non-undefined return value over exports use.
         if (cjsModule && cjsModule.exports !== undef &&
-            cjsModule.exports !== defined[name]) {
+          cjsModule.exports !== defined[name]) {
           defined[name] = cjsModule.exports;
         } else if (ret !== undef || !usingExports) {
           //Use the return value from the function.
@@ -332,6 +340,13 @@ var requirejs, require, define;
     } else if (!deps.splice) {
       //deps is a config object, not an array.
       config = deps;
+      if (config.deps) {
+        req(config.deps, config.callback);
+      }
+      if (!callback) {
+        return;
+      }
+
       if (callback.splice) {
         //callback is an array, which means it is a dependency list.
         //Adjust args if there are dependencies
@@ -344,7 +359,8 @@ var requirejs, require, define;
     }
 
     //Support require(['a'])
-    callback = callback || function () {};
+    callback = callback || function () {
+    };
 
     //If relName is a function, it is an errback handler,
     //so remove it.
@@ -376,12 +392,13 @@ var requirejs, require, define;
    * the config return value is used.
    */
   req.config = function (cfg) {
-    config = cfg;
-    if (config.deps) {
-      req(config.deps, config.callback);
-    }
-    return req;
+    return req(cfg);
   };
+
+  /**
+   * Expose module registry for debugging and tooling
+   */
+  requirejs._defined = defined;
 
   define = function (name, deps, callback) {
 

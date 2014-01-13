@@ -1,7 +1,5 @@
 module Requirejs
   class Config < ::ActiveSupport::OrderedOptions
-
-
     def initialize
       super
 
@@ -11,7 +9,16 @@ module Requirejs
       self.cache_assets_location = File.join(cache_location, 'assets')
       self.cache_build_scripts_location = File.join(cache_location, 'build_scripts')
       self.cache_builds_location = File.join(cache_location, 'builds')
+      self.build_script_template_location = File.join(gem_root_path, 'lib', 'requirejs','build.js.erb')
 
+      self.js_compressor = 'none' # :uglify
+
+      self.loader = :requirejs # :almond
+    end
+
+    def setup_directories
+      cleanup_cache_dir
+      ensure_cache_location_exists
     end
 
     def ensure_cache_location_exists
@@ -20,5 +27,21 @@ module Requirejs
       end
     end
 
+    def cleanup_cache_dir
+      FileUtils.remove_entry_secure(self.cache_location)
+    end
+
+    def optimize_with_almond?
+      self.loader == :almond
+    end
+  end
+
+  # Config accessors
+  def self.config=(config)
+    @config = config
+  end
+
+  def self.config
+    @config
   end
 end

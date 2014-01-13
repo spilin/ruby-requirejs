@@ -21,13 +21,13 @@ module Requirejs
       def evaluate(scope, locals, &block)
         @result = super
         if process_rjs?
+          Requirejs.config.setup_directories
           dump_config
         end
         @result
       end
 
       def dump_config
-        Requirejs.config.ensure_cache_location_exists
         File.open(File.join(Requirejs.config.cache_build_scripts_location, "#{name}.yaml"), 'w') do |f|
           process_include_directive(name)
           f.write(YAML.dump('include' => @include_modules))

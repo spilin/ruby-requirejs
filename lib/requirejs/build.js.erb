@@ -11,13 +11,12 @@ var requirejs = require("<%= Requirejs.config.runtime_location %>");
 var configs = [
     {
         baseUrl: "<%= Requirejs.config.cache_assets_location %>",
-        //  optimize: "uglify",
-        optimize: "none", // For debugging built versions
+        optimize: "<%= Requirejs.config.js_compressor %>", // For debugging built versions
         wrap: true,
         //All the built layers will use almond.
         name: 'almond',
-        include: <%= JSON.pretty_generate( config['include'] ) %>,
-        out: "<%= out_path %>"
+        include: <%= JSON.pretty_generate( config.include ) %>,
+        out: "<%= config.out %>"
     }
 ]
 
