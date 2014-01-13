@@ -21,7 +21,7 @@ module Requirejs
       def evaluate(scope, locals, &block)
         @result = super
         if process_rjs?
-          Requirejs.config.cleanup_directories
+          Requirejs.config.setup_directories
           dump_config
         end
         @result
