@@ -9,7 +9,7 @@ module Requirejs
       self.cache_assets_location = File.join(cache_location, 'assets')
       self.cache_build_scripts_location = File.join(cache_location, 'build_scripts')
       self.cache_builds_location = File.join(cache_location, 'builds')
-      self.build_script_template_location = File.join(gem_root_path, 'lib', 'requirejs','build.js.erb')
+      self.build_script_template_location = File.join(gem_root_path, 'lib', 'requirejs', 'builds', 'build.js.erb')
 
       self.js_compressor = 'none' # :uglify
 

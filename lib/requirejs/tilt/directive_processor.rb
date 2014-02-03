@@ -28,10 +28,8 @@ module Requirejs
       end
 
       def dump_config
-        File.open(File.join(Requirejs.config.cache_build_scripts_location, "#{name}.yaml"), 'w') do |f|
-          process_include_directive(name)
-          f.write(YAML.dump('include' => @include_modules))
-        end
+        process_include_directive(name)
+        ::Requirejs::BuildConfig.new(file).save({ 'include' => @include_modules })
       end
 
       protected

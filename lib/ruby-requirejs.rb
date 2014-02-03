@@ -1,5 +1,10 @@
 require 'requirejs/version'
 require 'requirejs/config'
+require 'requirejs/manifest'
+require 'requirejs/runtime/runtime'
+require 'requirejs/builds/build_config'
+require 'requirejs/builds/standard_build'
+require 'requirejs/builds/almond_build'
 require 'requirejs/compiler'
 
 if defined?(Rails)
