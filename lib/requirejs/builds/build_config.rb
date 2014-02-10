@@ -6,9 +6,21 @@ module Requirejs
       @file = file
     end
 
-    # Read config from file
-    def read
-      OpenStruct.new(YAML.load(File.read(file_path)).merge(default_config))
+    def data
+      @data ||= begin
+        data = {
+            wrap: true,
+            baseUrl: Requirejs.config.cache_assets_location,
+            optimize: Requirejs.config.js_compressor,
+            out: File.join(Requirejs.config.cache_builds_location, basename)
+        }.merge(config_from_file)
+        data[:name] = 'almond' if Requirejs.config.almond?
+        data
+      end
+    end
+
+    def as_json
+      JSON.dump(data)
     end
 
     # Dumps hash with build config to yaml file
@@ -28,8 +40,9 @@ module Requirejs
       File.join(Requirejs.config.cache_build_scripts_location, "#{name}.yaml")
     end
 
-    def default_config
-      { out: File.join(Requirejs.config.cache_builds_location, basename) }
+    # Read config from file
+    def config_from_file
+      YAML.load(File.read(file_path))
     end
 
     # The basename of the template file.

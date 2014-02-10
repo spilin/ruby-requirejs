@@ -8,10 +8,12 @@ module Requirejs
     end
 
     def exec
-      if Requirejs.config.optimize_with_almond?
-        AlmondBuild.new(@scope, @file, @data).build
+      if Requirejs.config.optimize?
+        OptimizedBuild.new(@scope, @file, @data).data
+      elsif Requirejs.config.digest?
+        Build.new(@scope, @file, @data).data
       else
-        StandardBuild.new(@scope, @file, @data).build
+        @data
       end
     end
 

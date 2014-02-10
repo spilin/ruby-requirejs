@@ -1,5 +1,5 @@
 module Requirejs
-  class AlmondBuild
+  class OptimizedBuild
     def initialize(scope, file, original_data)
       @scope, @file = scope, file
       @original_data = original_data
@@ -10,16 +10,17 @@ module Requirejs
       copy_assets
     end
 
-    def build
+    def data
       prepare
       ::Requirejs::Runtime.new(build_script).exec
-      File.read(config.out)
+      File.read(config.data[:out])
     end
 
     private
 
     def build_script
-      ERB.new(File.read(Requirejs.config.build_script_template_location)).result(binding)
+      build_script_path = File.join(Requirejs.config.gem_root_path, 'lib', 'requirejs', 'builds', 'build.js.erb')
+      ERB.new(File.read(build_script_path)).result(binding)
     end
 
     # Store data in assets cache dir so it will be used in compilation
@@ -49,7 +50,7 @@ module Requirejs
     end
 
     def config
-      @config ||= ::Requirejs::BuildConfig.new(@file).read
+      @config ||= ::Requirejs::BuildConfig.new(@file)
     end
 
   end
