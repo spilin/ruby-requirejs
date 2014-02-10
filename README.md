@@ -1,6 +1,7 @@
 # Ruby Requirejs
 [![Gem Version](https://badge.fury.io/rb/ruby-requirejs.png)](http://badge.fury.io/rb/ruby-requirejs)
 [![Code Climate](https://codeclimate.com/github/spilin/ruby-requirejs.png)](https://codeclimate.com/github/spilin/ruby-requirejs)
+[![Build Status](https://travis-ci.org/spilin/ruby-requirejs.png?branch=master)](https://travis-ci.org/spilin/ruby-requirejs)
 
 ## Installation
 
