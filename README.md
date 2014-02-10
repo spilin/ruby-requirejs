@@ -81,7 +81,7 @@ During `r.js` optimization `ruby-requirejs` will automatically add fingerprints 
 
 Want to add some examples? Document code? Implement new feature? Fix bug?
 
-1. Fork it ( http://github.com/<my-github-username>/ruby-requirejs/fork )
+1. Fork it ( http://github.com/spilin/ruby-requirejs/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
