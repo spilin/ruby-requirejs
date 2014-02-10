@@ -1,3 +1,6 @@
+require 'simplecov'
+SimpleCov.start
+
 require 'rails'
 require 'sprockets/rails'
 
