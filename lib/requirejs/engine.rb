@@ -13,7 +13,11 @@ module Requirejs
       else
         :none
       end
+
+      # Disable default assets pipeline compression
       env.js_compressor = nil
+
+      config.requirejs.digest = config.assets.digest
 
       # Changing Processors
       require 'requirejs/tilt/template'
@@ -21,8 +25,8 @@ module Requirejs
       env.unregister_processor('application/javascript', Sprockets::DirectiveProcessor)
       env.register_preprocessor('application/javascript', Requirejs::Tilt::DirectiveProcessor)
 
-      if Requirejs.config.optimize_with_almond?
-        # We are set
+      if Requirejs.config.optimize?
+        config.assets.precompile << 'require.js' unless Requirejs.config.almond?
       else
         # Ready to precompile everything
         config.assets.precompile += env.paths.map { |path| Dir.glob(File.join(path, '**', '*.{js,coffee}')) }.flatten.uniq

@@ -22,9 +22,9 @@ module Requirejs
       #
       # Returns a String with the compiled stylesheet with CSS syntax.
       def evaluate(scope, locals, &block)
-        compiler = ::Requirejs::Compiler.new(scope: scope, data: data, file: file)
-        if compiler.rjs?
-          @output || compiler.exec
+        if ::Requirejs::BuildConfig.new(file).exists?
+          compiler = ::Requirejs::Compiler.new(scope: scope, data: data, file: file)
+          @output ||= compiler.exec
         else
           @output ||= data
         end

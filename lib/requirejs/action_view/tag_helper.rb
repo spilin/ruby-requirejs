@@ -2,7 +2,7 @@ module Requirejs
   module ActionView
     module TagHelper
       def requirejs_include_tag(*sources)
-        if Requirejs.config.optimize_with_almond?
+        if Requirejs.config.almond?
           javascript_include_tag(*sources)
         else
           sources.uniq.map do |source|

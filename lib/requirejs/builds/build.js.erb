@@ -1,0 +1,8 @@
+//Load the requirejs optimizer
+var requirejs = require("<%= Requirejs.config.runtime_location %>");
+
+//Define optimize function so it can be called from within ExecJS
+var optimize = function () {
+    requirejs.optimize(<%= config.as_json %>);
+};
+

@@ -5,15 +5,31 @@ module Requirejs
 
       self.gem_root_path = Gem::Specification.find_by_name('ruby-requirejs').gem_dir
       self.runtime_location = File.join(gem_root_path, 'lib', 'requirejs', 'runtime', 'r.js')
-      self.cache_location = ::Rails.root.join('tmp', 'ruby-requirejs')
-      self.cache_assets_location = File.join(cache_location, 'assets')
-      self.cache_build_scripts_location = File.join(cache_location, 'build_scripts')
-      self.cache_builds_location = File.join(cache_location, 'builds')
-      self.build_script_template_location = File.join(gem_root_path, 'lib', 'requirejs','build.js.erb')
-
-      self.js_compressor = 'none' # :uglify
+      self.cache_location = nil
+      self.js_compressor = :none # :uglify
 
       self.loader = :requirejs # :almond
+      self.optimize = false # :almond
+      self.digest = false # :almond
+    end
+
+    def cache_assets_location
+      check_cache_location
+      @cache_assets_location ||= File.join(cache_location, 'assets')
+    end
+
+    def cache_build_scripts_location
+      check_cache_location
+      @cache_build_scripts_location ||= File.join(cache_location, 'build_scripts')
+    end
+
+    def cache_builds_location
+      check_cache_location
+      @cache_builds_location ||= File.join(cache_location, 'builds')
+    end
+
+    def check_cache_location
+      raise 'cache location is not set. Set cache_location. Ex.: Require.config.cache_location  = File.dirname(__FILE__)' if cache_location.blank?
     end
 
     def setup_directories
@@ -31,9 +47,18 @@ module Requirejs
       FileUtils.remove_entry_secure(self.cache_location) rescue nil
     end
 
-    def optimize_with_almond?
+    def almond?
       self.loader == :almond
     end
+
+    def optimize?
+      almond? || self.optimize
+    end
+
+    def digest?
+      self.digest
+    end
+
   end
 
   # Config accessors

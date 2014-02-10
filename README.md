@@ -1,9 +1,4 @@
-# Ruby::Requirejs
-# Initial implementation
-# Patience please, i'm working on it...
-# TODO: provide proper documentation and tests
-
-TODO: Write a gem description
+# Ruby Requirejs
 
 ## Installation
 
@@ -19,11 +14,69 @@ Or install it yourself as:
 
     $ gem install ruby-requirejs
 
+
+## Configuration
+
+### With Rails and the Asset Pipeline.
+
+#### Development
+You have several options. For development default configuration should be enough for you.
+By default requirejs will not perform any optimization or compression.
+
+#### Production
+For production setup you would probably want to use [almond](https://github.com/jrburke/almond) as an alternative loader.
+To enable `almond` you need to configure your `config/environments/{environment}.rb` or `config/environment.rb` if you want to use `almond` all the time (I would not recommend it)
+
+    config.requirejs.loader = :almond
+
+`ruby-requirejs` currently supports js_compression only with `uglifier`. To enable:
+
+    config.requirejs.js_compressor = :uglifier
+
+If you don't want to use `almond` remove `config.requirejs.loader = :almond` and instead add `config.requirejs.optimize = true`
+
+### Standalone Sprockets usage
+
+#### TODO: Coming soon
+
 ## Usage
 
-TODO: Write usage instructions here
+In your `application.js` add directive `rjs` so `ruby-requirejs` will know that this file should be processed as an entry point
+Example of `application.js` can look like this:
+
+    //= rjs
+
+    require.config({
+      shim:{
+        "jquery":{
+          exports:"$"
+        },
+        "turbolinks":{
+          exports:"Turbolinks"
+        },
+        "jquery_ujs":["jquery"],
+        "app":{
+          deps:[
+            "jquery",
+            "jquery_ujs",
+            "turbolinks"
+          ]
+        }
+      },
+
+        waitSeconds: 10,
+      catchError:false
+    });
+
+    require(["jquery", "turbolinks", "jquery_ujs", "app"], function ($, Turbolinks, uJS, App) {
+      App.initialize();
+    });
+
+During `r.js` optimization `ruby-requirejs` will automatically add fingerprints to assets if this is set in configuration.
 
 ## Contributing
+
+Want to add some examples? Document code? Implement new feature? Fix bug?
 
 1. Fork it ( http://github.com/<my-github-username>/ruby-requirejs/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
