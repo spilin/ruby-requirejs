@@ -77,6 +77,12 @@ Example of `application.js` can look like this:
 
 During `r.js` optimization `ruby-requirejs` will automatically add fingerprints to assets if this is set in configuration.
 
+#### ActionView
+
+If you use rails or ActionView you can use `requirejs_include_tag`. Erb example:
+
+    <%= requirejs_include_tag 'app' %>
+
 ## Contributing
 
 Want to add some examples? Document code? Implement new feature? Fix bug?
